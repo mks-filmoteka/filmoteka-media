@@ -1,12 +1,12 @@
 package io.github.mksfilmoteka.media.file
 
+import org.springframework.core.io.Resource
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("/api/v1/media/files")
@@ -17,5 +17,22 @@ class FileController(private val fileService: FileService) {
         val response = fileService.upload(file)
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
+    }
+
+    @GetMapping("/{fileName}")
+    fun load(@PathVariable fileName: String): ResponseEntity<Resource> {
+        val contentType = resolveContentType(fileName)
+        val resource = fileService.load(fileName)
+
+        return ResponseEntity.ok().contentType(contentType).body(resource)
+    }
+
+    private fun resolveContentType(fileName: String): MediaType {
+        return when (val extension = fileName.substringAfterLast('.', "").lowercase()) {
+            "jpg", "jpeg" -> MediaType.IMAGE_JPEG
+            "png" -> MediaType.IMAGE_PNG
+            "webp" -> MediaType.parseMediaType("image/webp")
+            else -> throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported file extension: $extension")
+        }
     }
 }

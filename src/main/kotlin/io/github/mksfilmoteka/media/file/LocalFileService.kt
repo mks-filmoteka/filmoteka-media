@@ -51,7 +51,7 @@ class LocalFileService(mediaProperties: MediaProperties) : FileService {
     private fun extractExtension(originalFilename: String?): String {
         require(!originalFilename.isNullOrBlank()) { "Original filename must not be blank" }
 
-        val extension = originalFilename.substringAfterLast('.', missingDelimiterValue = "").lowercase()
+        val extension = originalFilename.substringAfterLast('.', "").lowercase()
 
         require(extension.isNotBlank()) { "File extension is missing" }
         require(extension in allowedExtensions) { "Unsupported file extension: $extension" }
