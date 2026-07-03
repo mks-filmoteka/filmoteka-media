@@ -1,3 +1,3 @@
 package io.github.mksfilmoteka.media.file
 
-data class UploadFileResponse(val filename: String)
+data class UploadFileResponse(val fileName: String)
