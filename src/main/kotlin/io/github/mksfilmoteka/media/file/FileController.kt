@@ -28,11 +28,9 @@ class FileController(private val fileService: FileService) {
     }
 
     private fun resolveContentType(fileName: String): MediaType {
-        return when (val extension = fileName.substringAfterLast('.', "").lowercase()) {
-            "jpg", "jpeg" -> MediaType.IMAGE_JPEG
-            "png" -> MediaType.IMAGE_PNG
-            "webp" -> MediaType.parseMediaType("image/webp")
-            else -> throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported file extension: $extension")
-        }
+        val extension = fileName.substringAfterLast('.', "").lowercase()
+        val imageType = SupportedImageType.fromExtension(extension)
+            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported file extension: $extension")
+        return imageType.mediaType
     }
 }

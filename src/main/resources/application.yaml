@@ -12,3 +12,7 @@ spring:
 
 media:
   root-location: uploads
+  image:
+    max-width: 300
+    max-height: 450
+    output-quality: 0.9
