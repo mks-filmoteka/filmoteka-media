@@ -1,6 +1,7 @@
 package io.github.mksfilmoteka.media.file
 
 import io.github.mksfilmoteka.media.config.MediaProperties
+import io.github.mksfilmoteka.media.exception.ResourceNotFoundException
 import net.coobird.thumbnailator.Thumbnails
 import org.springframework.core.io.Resource
 import org.springframework.core.io.UrlResource
@@ -42,7 +43,9 @@ class LocalFileService(private val mediaProperties: MediaProperties) : FileServi
         val filePath = rootLocation.resolve(fileName).normalize()
         val resource = UrlResource(filePath.toUri())
 
-        require(resource.exists() && resource.isReadable) { "File not found: $fileName" }
+        if (!resource.exists() || !resource.isReadable) {
+            throw ResourceNotFoundException("File not found: $fileName")
+        }
 
         return resource
     }
