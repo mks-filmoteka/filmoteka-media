@@ -26,6 +26,13 @@ class FileController(private val fileService: FileService) {
         return ResponseEntity.ok().contentType(contentType).body(resource)
     }
 
+    @DeleteMapping("/{fileName}")
+    fun delete(@PathVariable fileName: String): ResponseEntity<Unit> {
+        fileService.delete(fileName)
+
+        return ResponseEntity.noContent().build()
+    }
+
     private fun resolveContentType(fileName: String): MediaType {
         val extension = fileName.substringAfterLast('.', "").lowercase()
         val imageType = SupportedImageType.fromExtension(extension)

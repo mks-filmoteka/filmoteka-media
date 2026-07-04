@@ -14,7 +14,7 @@ import java.util.*
 @Service
 class LocalFileService(private val mediaProperties: MediaProperties) : FileService {
 
-    private val rootLocation: Path = Path.of(mediaProperties.rootLocation)
+    private val rootLocation: Path = Path.of(mediaProperties.rootLocation).toAbsolutePath().normalize()
 
     init {
         Files.createDirectories(rootLocation)
@@ -36,11 +36,12 @@ class LocalFileService(private val mediaProperties: MediaProperties) : FileServi
                 .toFile(targetLocation.toFile())
         }
 
-        return UploadFileResponse(fileName)
+        return UploadFileResponse(fileName, "/api/v1/media/files/$fileName")
     }
 
     override fun load(fileName: String): Resource {
         val filePath = rootLocation.resolve(fileName).normalize()
+        require(filePath.startsWith(rootLocation)) { "Invalid file path" }
         val resource = UrlResource(filePath.toUri())
 
         if (!resource.exists() || !resource.isReadable) {
@@ -52,6 +53,7 @@ class LocalFileService(private val mediaProperties: MediaProperties) : FileServi
 
     override fun delete(fileName: String) {
         val filePath = rootLocation.resolve(fileName).normalize()
+        require(filePath.startsWith(rootLocation)) { "Invalid file path" }
         Files.deleteIfExists(filePath)
     }
 
