@@ -1,6 +1,7 @@
 package io.github.mksfilmoteka.media.exception
 
 import jakarta.servlet.http.HttpServletRequest
+import net.coobird.thumbnailator.tasks.UnsupportedFormatException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -14,9 +15,25 @@ class GlobalExceptionHandler {
         ex: IllegalArgumentException, request: HttpServletRequest): ResponseEntity<ErrorResponse> {
         val status = HttpStatus.BAD_REQUEST
         return ResponseEntity.status(status)
-            .body(ErrorResponse(
+            .body(
+                ErrorResponse(
                     status = status.value(),
                     message = ex.message ?: "Invalid request",
+                    path = request.requestURI,
+                    code = ErrorCode.INVALID_REQUEST
+                )
+            )
+    }
+
+    @ExceptionHandler(UnsupportedFormatException::class)
+    fun handleUnsupportedImageFormat(
+        ex: UnsupportedFormatException, request: HttpServletRequest): ResponseEntity<ErrorResponse> {
+        val status = HttpStatus.BAD_REQUEST
+        return ResponseEntity.status(status)
+            .body(
+                ErrorResponse(
+                    status = status.value(),
+                    message = "Unsupported or invalid image file",
                     path = request.requestURI,
                     code = ErrorCode.INVALID_REQUEST
                 )
