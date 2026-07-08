@@ -4,6 +4,7 @@ import io.github.mksfilmoteka.media.config.MediaProperties
 import io.github.mksfilmoteka.media.exception.ResourceNotFoundException
 import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.tasks.UnsupportedFormatException
+import org.slf4j.LoggerFactory
 import org.springframework.core.io.Resource
 import org.springframework.core.io.UrlResource
 import org.springframework.stereotype.Service
@@ -17,10 +18,13 @@ import javax.imageio.ImageIO
 @Service
 class LocalFileService(private val mediaProperties: MediaProperties) : FileService {
 
+    private val log = LoggerFactory.getLogger(LocalFileService::class.java)
+
     private val rootLocation: Path = Path.of(mediaProperties.rootLocation).toAbsolutePath().normalize()
 
     init {
         Files.createDirectories(rootLocation)
+        log.info("Media root location initialized at {}", rootLocation)
     }
 
     override fun upload(file: MultipartFile): UploadFileResponse {
@@ -45,7 +49,11 @@ class LocalFileService(private val mediaProperties: MediaProperties) : FileServi
                 .toFile(targetLocation.toFile())
         }
 
-        return UploadFileResponse(fileName, "/api/v1/media/files/$fileName")
+        val response = UploadFileResponse(fileName, "/api/v1/media/files/$fileName")
+        log.info("Stored uploaded image {} as {} with content type {}",
+            file.originalFilename, response.fileName, file.contentType)
+
+        return response
     }
 
     override fun load(fileName: String): Resource {
@@ -57,6 +65,7 @@ class LocalFileService(private val mediaProperties: MediaProperties) : FileServi
             throw ResourceNotFoundException("File not found: $fileName")
         }
 
+        log.debug("Loaded media file {}", fileName)
         return resource
     }
 
@@ -64,6 +73,7 @@ class LocalFileService(private val mediaProperties: MediaProperties) : FileServi
         val filePath = rootLocation.resolve(fileName).normalize()
         require(filePath.startsWith(rootLocation)) { "Invalid file path" }
         Files.deleteIfExists(filePath)
+        log.info("Deleted media file {}", fileName)
     }
 
     private fun validateImageFile(originalFilename: String?, contentType: String?): ImageFile {
