@@ -12,7 +12,8 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgumentException(
-        ex: IllegalArgumentException, request: HttpServletRequest): ResponseEntity<ErrorResponse> {
+        ex: IllegalArgumentException, request: HttpServletRequest
+    ): ResponseEntity<ErrorResponse> {
         val status = HttpStatus.BAD_REQUEST
         return ResponseEntity.status(status)
             .body(
@@ -27,7 +28,8 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(UnsupportedFormatException::class)
     fun handleUnsupportedImageFormat(
-        ex: UnsupportedFormatException, request: HttpServletRequest): ResponseEntity<ErrorResponse> {
+        ex: UnsupportedFormatException, request: HttpServletRequest
+    ): ResponseEntity<ErrorResponse> {
         val status = HttpStatus.BAD_REQUEST
         return ResponseEntity.status(status)
             .body(
@@ -42,7 +44,8 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException::class)
     fun handleResourceNotFound(
-        ex: ResourceNotFoundException, request: HttpServletRequest): ResponseEntity<ErrorResponse> {
+        ex: ResourceNotFoundException, request: HttpServletRequest
+    ): ResponseEntity<ErrorResponse> {
         val status = HttpStatus.NOT_FOUND
         return ResponseEntity.status(status)
             .body(
@@ -57,7 +60,8 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception::class)
     fun handleGeneric(
-        ex: Exception, request: HttpServletRequest): ResponseEntity<ErrorResponse> {
+        ex: Exception, request: HttpServletRequest
+    ): ResponseEntity<ErrorResponse> {
         val status = HttpStatus.INTERNAL_SERVER_ERROR
         return ResponseEntity.status(status)
             .body(
