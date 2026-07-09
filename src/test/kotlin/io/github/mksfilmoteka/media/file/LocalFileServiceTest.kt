@@ -2,14 +2,12 @@ package io.github.mksfilmoteka.media.file
 
 import io.github.mksfilmoteka.media.config.MediaProperties
 import io.github.mksfilmoteka.media.exception.ResourceNotFoundException
+import io.github.mksfilmoteka.media.util.TestUtil.imageBytes
 import net.coobird.thumbnailator.tasks.UnsupportedFormatException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import org.springframework.mock.web.MockMultipartFile
-import java.awt.Color
-import java.awt.image.BufferedImage
-import java.io.ByteArrayOutputStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
@@ -183,19 +181,6 @@ class LocalFileServiceTest {
         }
 
         assertEquals("Invalid file path", exception.message)
-    }
-
-    private fun imageBytes(format: String, width: Int = 100, height: Int = 100): ByteArray {
-        val image = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
-        val graphics = image.createGraphics()
-        graphics.color = Color.RED
-        graphics.fillRect(0, 0, width, height)
-        graphics.dispose()
-
-        return ByteArrayOutputStream().use { outputStream ->
-            ImageIO.write(image, format, outputStream)
-            outputStream.toByteArray()
-        }
     }
 
     private data class UploadCase(
