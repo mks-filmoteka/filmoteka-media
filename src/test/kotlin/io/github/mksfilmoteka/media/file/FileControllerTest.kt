@@ -91,6 +91,19 @@ class FileControllerTest {
     }
 
     @Test
+    fun `should return webp content type when loading webp file`() {
+        val body = byteArrayOf(7, 8, 9)
+        `when`(fileService.load("poster.webp")).thenReturn(ByteArrayResource(body))
+
+        mockMvc.perform(get("/api/v1/media/files/poster.webp"))
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(IMAGE_WEBP_VALUE))
+            .andExpect(content().bytes(body))
+
+        verify(fileService).load("poster.webp")
+    }
+
+    @Test
     fun `should return bad request without calling service when loading unsupported extension`() {
         mockMvc.perform(get("/api/v1/media/files/poster.gif"))
             .andExpect(status().isBadRequest)

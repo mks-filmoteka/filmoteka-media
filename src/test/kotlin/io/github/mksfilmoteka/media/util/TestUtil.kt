@@ -17,7 +17,7 @@ object TestUtil {
         graphics.dispose()
 
         return ByteArrayOutputStream().use { outputStream ->
-            ImageIO.write(image, format, outputStream)
+            require(ImageIO.write(image, format, outputStream)) { "Unsupported image format: $format" }
             outputStream.toByteArray()
         }
     }

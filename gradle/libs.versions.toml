@@ -4,6 +4,7 @@ spring-boot = "4.1.0"
 spring-dependency-management = "1.1.7"
 springdoc-openapi = "3.0.3"
 thumbnailator = "0.4.20"
+webp-imageio = "0.1.6"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -14,3 +15,4 @@ spring-dependency-management = { id = "io.spring.dependency-management", version
 [libraries]
 springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc-openapi" }
 thumbnailator = { module = "net.coobird:thumbnailator", version.ref = "thumbnailator" }
+webp-imageio = { module = "org.sejda.imageio:webp-imageio", version.ref = "webp-imageio" }

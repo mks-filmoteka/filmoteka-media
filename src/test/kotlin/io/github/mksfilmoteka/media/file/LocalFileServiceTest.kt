@@ -68,6 +68,27 @@ class LocalFileServiceTest {
     }
 
     @Test
+    fun `should store resized image with webp extension when uploading valid webp`() {
+        val file = MockMultipartFile(
+            "file",
+            "poster.webp",
+            IMAGE_WEBP_VALUE,
+            imageBytes("webp", width = 800, height = 1200),
+        )
+
+        val response = service.upload(file)
+
+        assertEquals("webp", response.fileName.substringAfterLast('.'))
+
+        val storedFile = tempDir.resolve(response.fileName)
+        assertTrue(Files.exists(storedFile))
+
+        val storedImage = ImageIO.read(storedFile.toFile())
+        assertEquals(300, storedImage.width)
+        assertEquals(450, storedImage.height)
+    }
+
+    @Test
     fun `should throw illegal argument when uploading empty file`() {
         val file = MockMultipartFile("file", "poster.jpg", "image/jpeg", ByteArray(0))
 

@@ -27,6 +27,7 @@ dependencies {
     implementation("tools.jackson.module:jackson-module-kotlin")
     implementation(libs.springdoc.openapi.starter.webmvc.ui)
     implementation(libs.thumbnailator)
+    implementation(libs.webp.imageio)
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
     testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")

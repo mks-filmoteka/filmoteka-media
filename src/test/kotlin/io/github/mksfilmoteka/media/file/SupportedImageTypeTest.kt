@@ -12,6 +12,7 @@ class SupportedImageTypeTest {
         assertEquals(SupportedImageType.JPEG, SupportedImageType.fromExtension("jpg"))
         assertEquals(SupportedImageType.JPEG, SupportedImageType.fromExtension("JPEG"))
         assertEquals(SupportedImageType.PNG, SupportedImageType.fromExtension("PnG"))
+        assertEquals(SupportedImageType.WEBP, SupportedImageType.fromExtension("WeBp"))
     }
 
     @Test
@@ -24,6 +25,7 @@ class SupportedImageTypeTest {
         assertEquals(SupportedImageType.JPEG, SupportedImageType.fromContentType("image/jpeg"))
         assertEquals(SupportedImageType.JPEG, SupportedImageType.fromContentType("IMAGE/JPEG"))
         assertEquals(SupportedImageType.PNG, SupportedImageType.fromContentType("Image/Png"))
+        assertEquals(SupportedImageType.WEBP, SupportedImageType.fromContentType("Image/WebP"))
     }
 
     @Test
@@ -35,5 +37,6 @@ class SupportedImageTypeTest {
     fun `should expose expected spring media types for supported image types`() {
         assertEquals(MediaType.IMAGE_JPEG, SupportedImageType.JPEG.mediaType)
         assertEquals(MediaType.IMAGE_PNG, SupportedImageType.PNG.mediaType)
+        assertEquals(MediaType.parseMediaType(IMAGE_WEBP_VALUE), SupportedImageType.WEBP.mediaType)
     }
 }

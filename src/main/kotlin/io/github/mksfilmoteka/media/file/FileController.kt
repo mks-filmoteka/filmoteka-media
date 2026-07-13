@@ -22,7 +22,7 @@ class FileController(private val fileService: FileService) {
     @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @Operation(
         summary = "Upload image file",
-        description = "Uploads a JPEG or PNG image, resizes it, and returns the stored file reference.",
+        description = "Uploads a JPEG, PNG, or WebP image, resizes it, and returns the stored file reference.",
     )
     @ApiResponse(responseCode = "201", description = "File uploaded",
         content = [
@@ -41,7 +41,7 @@ class FileController(private val fileService: FileService) {
         ],
     )
     fun upload(
-        @Parameter(description = "JPEG or PNG image file to upload", required = true)
+        @Parameter(description = "JPEG, PNG, or WebP image file to upload", required = true)
         @RequestParam("file") file: MultipartFile,
     ): ResponseEntity<UploadFileResponse> {
         val response = fileService.upload(file)
@@ -52,7 +52,7 @@ class FileController(private val fileService: FileService) {
     @GetMapping("/{fileName}")
     @Operation(
         summary = "Load image file",
-        description = "Returns a stored JPEG or PNG image."
+        description = "Returns a stored JPEG, PNG, or WebP image."
     )
     @ApiResponse(responseCode = "200", description = "Image file",
         content = [
@@ -62,6 +62,10 @@ class FileController(private val fileService: FileService) {
             ),
             Content(
                 mediaType = MediaType.IMAGE_PNG_VALUE,
+                schema = Schema(type = "string", format = "binary"),
+            ),
+            Content(
+                mediaType = IMAGE_WEBP_VALUE,
                 schema = Schema(type = "string", format = "binary"),
             ),
         ],
