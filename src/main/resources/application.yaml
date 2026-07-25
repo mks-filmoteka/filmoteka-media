@@ -13,6 +13,8 @@ spring:
 logging:
   level:
     io.github.mksfilmoteka.media: INFO
+  pattern:
+    level: "%5p [correlationId=%X{correlationId:-}]"
 
 media:
   root-location: uploads
