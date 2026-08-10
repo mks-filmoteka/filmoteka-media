@@ -1,6 +1,9 @@
 build
 .gradle
 .git
+.github
 .idea
 *.iml
+*.log
 uploads
+.env

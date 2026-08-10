@@ -1,3 +1,17 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/filmoteka
+          jwk-set-uri: http://localhost:8180/realms/filmoteka/protocol/openid-connect/certs
+          audiences:
+            - filmoteka-api
+
+logging:
+  level:
+    root: WARN
+    
 app:
   cors:
     allowed-origins: http://localhost:5173

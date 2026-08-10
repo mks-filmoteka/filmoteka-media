@@ -1,6 +1,7 @@
 package io.github.mksfilmoteka.media
 
 import com.jayway.jsonpath.JsonPath
+import io.github.mksfilmoteka.media.util.TestUtil.adminJwt
 import io.github.mksfilmoteka.media.util.TestUtil.clearDirectory
 import io.github.mksfilmoteka.media.util.TestUtil.imageBytes
 import org.junit.jupiter.api.AfterEach
@@ -50,7 +51,7 @@ class FilmotekaMediaApplicationTest {
             imageBytes("jpg", width = 800, height = 1200),
         )
 
-        val uploadResult = mockMvc.perform(multipart("/api/v1/media/files").file(file))
+        val uploadResult = mockMvc.perform(multipart("/api/v1/media/files").file(file).with(adminJwt()))
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.fileName").exists())
             .andExpect(jsonPath("$.url").exists())
@@ -77,7 +78,7 @@ class FilmotekaMediaApplicationTest {
         assertEquals(300, loadedImage.width)
         assertEquals(450, loadedImage.height)
 
-        mockMvc.perform(delete(url))
+        mockMvc.perform(delete(url).with(adminJwt()))
             .andExpect(status().isNoContent)
 
         assertFalse(Files.exists(mediaRoot.resolve(fileName)))
