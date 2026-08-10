@@ -1,13 +1,17 @@
 package io.github.mksfilmoteka.media.file
 
+import io.github.mksfilmoteka.media.auth.KeycloakRealmRoleConverter
+import io.github.mksfilmoteka.media.auth.SecurityConfig
 import io.github.mksfilmoteka.media.exception.ErrorCode
 import io.github.mksfilmoteka.media.exception.ResourceNotFoundException
+import io.github.mksfilmoteka.media.util.TestUtil.adminJwt
 import net.coobird.thumbnailator.tasks.UnsupportedFormatException
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
+import org.springframework.context.annotation.Import
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
@@ -17,6 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 @WebMvcTest(FileController::class)
+@Import(SecurityConfig::class, KeycloakRealmRoleConverter::class)
 class FileControllerTest {
 
     @MockitoBean
@@ -36,7 +41,7 @@ class FileControllerTest {
         `when`(fileService.upload(file))
             .thenReturn(UploadFileResponse("generated.jpg", "/api/v1/media/files/generated.jpg"))
 
-        mockMvc.perform(multipart("/api/v1/media/files").file(file))
+        mockMvc.perform(multipart("/api/v1/media/files").file(file).with(adminJwt()))
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.fileName").value("generated.jpg"))
             .andExpect(jsonPath("$.url").value("/api/v1/media/files/generated.jpg"))
@@ -56,7 +61,7 @@ class FileControllerTest {
             throw UnsupportedFormatException(UnsupportedFormatException.UNKNOWN)
         }.`when`(fileService).upload(file)
 
-        mockMvc.perform(multipart("/api/v1/media/files").file(file))
+        mockMvc.perform(multipart("/api/v1/media/files").file(file).with(adminJwt()))
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.message").value("Unsupported or invalid image file"))
@@ -143,7 +148,7 @@ class FileControllerTest {
 
     @Test
     fun `should return no content and delegate to service when deleting file`() {
-        mockMvc.perform(delete("/api/v1/media/files/poster.jpg"))
+        mockMvc.perform(delete("/api/v1/media/files/poster.jpg").with(adminJwt()))
             .andExpect(status().isNoContent)
 
         verify(fileService).delete("poster.jpg")
