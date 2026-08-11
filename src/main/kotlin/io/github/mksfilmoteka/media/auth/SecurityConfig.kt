@@ -5,6 +5,7 @@ import org.springframework.boot.security.autoconfigure.actuate.web.servlet.Endpo
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
+import org.springframework.security.config.Customizer.withDefaults
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
@@ -25,6 +26,7 @@ class SecurityConfig {
         jwtAuthenticationConverter: JwtAuthenticationConverter
     ): SecurityFilterChain {
         return http
+            .cors(withDefaults())
             .csrf { it.disable() }
             .formLogin { it.disable() }
             .httpBasic { it.disable() }
