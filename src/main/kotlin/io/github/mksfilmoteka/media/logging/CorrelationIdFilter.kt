@@ -33,12 +33,13 @@ class CorrelationIdFilter : OncePerRequestFilter() {
 
     private fun resolveCorrelationId(request: HttpServletRequest): String {
         return request.getHeader(CORRELATION_ID_HEADER)
-            ?.takeIf { it.isNotBlank() }
+            ?.takeIf { VALID_CORRELATION_ID.matches(it) }
             ?: UUID.randomUUID().toString()
     }
 
     companion object {
         const val CORRELATION_ID_HEADER = "X-Correlation-Id"
         const val CORRELATION_ID_MDC_KEY = "correlationId"
+        private val VALID_CORRELATION_ID = Regex("[A-Za-z0-9][A-Za-z0-9._-]{0,63}")
     }
 }
