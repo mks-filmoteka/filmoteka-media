@@ -8,11 +8,13 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.core.io.Resource
+import org.springframework.http.CacheControl
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import java.time.Duration
 
 @RestController
 @RequestMapping("/api/v1/media/files")
@@ -93,7 +95,10 @@ class FileController(private val fileService: FileService) {
         val contentType = resolveContentType(fileName)
         val resource = fileService.load(fileName)
 
-        return ResponseEntity.ok().contentType(contentType).body(resource)
+        return ResponseEntity.ok()
+            .contentType(contentType)
+            .cacheControl(CacheControl.maxAge(Duration.ofDays(1)).cachePublic())
+            .body(resource)
     }
 
     @DeleteMapping("/{fileName}")
