@@ -30,6 +30,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("tools.jackson.module:jackson-module-kotlin")
     implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
+    implementation("org.springframework.boot:spring-boot-starter-kafka")
     implementation(libs.springdoc.openapi.starter.webmvc.ui)
     implementation(libs.thumbnailator)
     implementation(libs.webp.imageio)
