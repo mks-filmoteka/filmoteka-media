@@ -14,7 +14,7 @@ class FilmPosterChangedListener(
 
     private val log = LoggerFactory.getLogger(FilmPosterChangedListener::class.java)
 
-    @KafkaListener(topics = ["\${app.kafka.topics.film-poster-changed.name}"])
+    @KafkaListener(topics = [$$"${app.kafka.topics.film-poster-changed.name}"])
     fun onFilmPosterChanged(payload: String) {
         val event = requireNotNull(
             jsonMapper.readValue(payload, FilmPosterChangedEvent::class.java)

@@ -14,7 +14,7 @@ class FilmDeletedListener(
 
     private val log = LoggerFactory.getLogger(FilmDeletedListener::class.java)
 
-    @KafkaListener(topics = ["\${app.kafka.topics.film-deleted.name}"])
+    @KafkaListener(topics = [$$"${app.kafka.topics.film-deleted.name}"])
     fun onFilmDeleted(payload: String) {
         val event = requireNotNull(
             jsonMapper.readValue(payload, FilmDeletedEvent::class.java)
