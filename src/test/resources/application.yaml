@@ -9,6 +9,8 @@ spring:
             - filmoteka-api
 
   kafka:
+    admin:
+      auto-create: false
     consumer:
       group-id: filmoteka-media-test
     listener:

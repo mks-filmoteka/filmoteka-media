@@ -2,7 +2,9 @@ package io.github.mksfilmoteka.media.catalog
 
 import io.github.mksfilmoteka.media.file.FileService
 import org.slf4j.LoggerFactory
+import org.springframework.kafka.annotation.BackOff
 import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.kafka.annotation.RetryableTopic
 import org.springframework.stereotype.Component
 import tools.jackson.databind.json.JsonMapper
 
@@ -14,7 +16,16 @@ class FilmPosterChangedListener(
 
     private val log = LoggerFactory.getLogger(FilmPosterChangedListener::class.java)
 
-    @KafkaListener(topics = [$$"${app.kafka.topics.film-poster-changed.name}"])
+    @RetryableTopic(
+        backOff = BackOff(multiplier = 2.0),
+        retryTopicSuffix = ".media.retry",
+        dltTopicSuffix = ".media.dlt",
+        autoStartDltHandler = "false"
+    )
+    @KafkaListener(
+        topics = [$$"${app.kafka.topics.film-poster-changed.name}"],
+        groupId = $$"${spring.kafka.consumer.group-id}"
+    )
     fun onFilmPosterChanged(payload: String) {
         val event = requireNotNull(
             jsonMapper.readValue(payload, FilmPosterChangedEvent::class.java)

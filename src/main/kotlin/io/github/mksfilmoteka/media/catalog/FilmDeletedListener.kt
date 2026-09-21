@@ -2,7 +2,9 @@ package io.github.mksfilmoteka.media.catalog
 
 import io.github.mksfilmoteka.media.file.FileService
 import org.slf4j.LoggerFactory
+import org.springframework.kafka.annotation.BackOff
 import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.kafka.annotation.RetryableTopic
 import org.springframework.stereotype.Component
 import tools.jackson.databind.json.JsonMapper
 
@@ -14,7 +16,16 @@ class FilmDeletedListener(
 
     private val log = LoggerFactory.getLogger(FilmDeletedListener::class.java)
 
-    @KafkaListener(topics = [$$"${app.kafka.topics.film-deleted.name}"])
+    @RetryableTopic(
+        backOff = BackOff(multiplier = 2.0),
+        retryTopicSuffix = ".media.retry",
+        dltTopicSuffix = ".media.dlt",
+        autoStartDltHandler = "false"
+    )
+    @KafkaListener(
+        topics = [$$"${app.kafka.topics.film-deleted.name}"],
+        groupId = $$"${spring.kafka.consumer.group-id}"
+    )
     fun onFilmDeleted(payload: String) {
         val event = requireNotNull(
             jsonMapper.readValue(payload, FilmDeletedEvent::class.java)
