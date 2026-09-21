@@ -17,7 +17,7 @@ class FilmDeletedListener(
     private val log = LoggerFactory.getLogger(FilmDeletedListener::class.java)
 
     @RetryableTopic(
-        backOff = BackOff(multiplier = 2.0),
+        backOff = BackOff(delayString = $$"${app.kafka.retry-delay}", multiplier = 2.0),
         retryTopicSuffix = ".media.retry",
         dltTopicSuffix = ".media.dlt",
         autoStartDltHandler = "false"

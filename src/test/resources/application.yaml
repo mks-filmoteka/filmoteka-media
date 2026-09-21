@@ -25,6 +25,7 @@ app:
     allowed-origins: http://localhost:5173
 
   kafka:
+    retry-delay: 50ms
     topics:
       film-deleted:
         name: film-deleted-test
