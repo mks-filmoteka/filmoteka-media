@@ -20,6 +20,12 @@ spring:
             - ${AUTH_AUDIENCE}
 
   kafka:
+    admin:
+      operation-timeout: 5s
+      close-timeout: 2s
+    properties:
+      "[reconnect.backoff.ms]": 1000
+      "[reconnect.backoff.max.ms]": 10000
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     consumer:
       group-id: ${KAFKA_MEDIA_CONSUMER_GROUP_ID}
@@ -40,6 +46,8 @@ app:
 logging:
   level:
     io.github.mksfilmoteka.media: INFO
+    org.apache.kafka: WARN
+    org.springframework.kafka: WARN
   pattern:
     level: "%5p [correlationId=%X{correlationId:-}]"
 
