@@ -57,3 +57,19 @@ media:
     max-width: 300
     max-height: 450
     output-quality: 0.9
+
+management:
+  endpoint:
+    health:
+      show-details: when-authorized
+      roles: ADMIN
+      group:
+        readiness:
+          include: readinessState,diskSpace
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  health:
+    diskspace:
+      path: ${media.root-location}

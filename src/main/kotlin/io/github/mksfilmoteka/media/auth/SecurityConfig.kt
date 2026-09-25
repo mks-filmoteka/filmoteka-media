@@ -34,6 +34,7 @@ class SecurityConfig {
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests {
                 it.requestMatchers(EndpointRequest.to(HealthEndpoint::class.java)).permitAll()
+                it.requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole(ADMIN_ROLE)
                 it.requestMatchers(*SWAGGER_PATHS).permitAll()
                 it.requestMatchers(HttpMethod.GET, URL_PATTERN).permitAll()
                 it.requestMatchers(HttpMethod.POST, URL_PATTERN).hasRole(ADMIN_ROLE)
