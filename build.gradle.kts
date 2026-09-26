@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.github.mksfilmoteka"
-version = "2.0.0-SNAPSHOT"
+version = "2.0.0"
 description = "Filmoteka media service"
 
 java {

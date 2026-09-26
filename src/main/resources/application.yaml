@@ -58,6 +58,15 @@ media:
     max-height: 450
     output-quality: 0.9
 
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+    display-request-duration: true
+
 management:
   endpoint:
     health:
