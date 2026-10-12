@@ -51,7 +51,7 @@ dependencies {
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
+        freeCompilerArgs.addAll("-Xjsr305=strict")
     }
 }
 
@@ -62,5 +62,5 @@ tasks.withType<Test> {
         events("passed", "skipped", "failed")
     }
 
-    jvmArgs("-javaagent:${configurations["mockitoAgent"].asPath}")
+    jvmArgs("-javaagent:${configurations["mockitoAgent"].asPath}", "--enable-native-access=ALL-UNNAMED")
 }
