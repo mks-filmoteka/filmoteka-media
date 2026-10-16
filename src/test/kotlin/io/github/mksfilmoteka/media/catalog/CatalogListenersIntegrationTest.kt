@@ -34,7 +34,12 @@ import kotlin.test.assertEquals
 )
 @EmbeddedKafka(
     partitions = 1,
-    topics = [$$"${app.kafka.topics.film-deleted.name}", $$"${app.kafka.topics.film-poster-changed.name}"]
+    topics = [
+        $$"${app.kafka.topics.film-deleted.name}",
+        $$"${app.kafka.topics.film-poster-changed.name}",
+        $$"${app.kafka.topics.person-deleted.name}",
+        $$"${app.kafka.topics.person-photo-changed.name}"
+    ]
 )
 @DirtiesContext
 class CatalogListenersIntegrationTest {
@@ -44,6 +49,12 @@ class CatalogListenersIntegrationTest {
 
     @Value($$"${app.kafka.topics.film-poster-changed.name}")
     private lateinit var filmPosterChangedTopic: String
+
+    @Value($$"${app.kafka.topics.person-deleted.name}")
+    private lateinit var personDeletedTopic: String
+
+    @Value($$"${app.kafka.topics.person-photo-changed.name}")
+    private lateinit var personPhotoChangedTopic: String
 
     @Autowired
     private lateinit var kafkaTemplate: KafkaTemplate<String, String>
@@ -83,10 +94,39 @@ class CatalogListenersIntegrationTest {
         assertFailedCleanupReachesDlt(filmPosterChangedTopic, "456", payload, "old-poster.jpg")
     }
 
-    private fun assertFailedCleanupReachesDlt(topic: String, key: String, payload: String, posterName: String) {
+    @Test
+    fun `should publish person deletion to DLT after three failed attempts`() {
+        val payload = """
+            {
+              "eventId": "33333333-3333-4333-8333-333333333333",
+              "personId": 789,
+              "photoName": "deleted-photo.jpg",
+              "occurredAt": "2026-09-21T10:00:00Z"
+            }
+        """.trimIndent()
+
+        assertFailedCleanupReachesDlt(personDeletedTopic, "789", payload, "deleted-photo.jpg")
+    }
+
+    @Test
+    fun `should publish photo change to DLT after three failed attempts`() {
+        val payload = """
+            {
+              "eventId": "44444444-4444-4444-8444-444444444444",
+              "personId": 790,
+              "oldPhotoName": "old-photo.jpg",
+              "newPhotoName": "new-photo.jpg",
+              "occurredAt": "2026-09-21T10:00:00Z"
+            }
+        """.trimIndent()
+
+        assertFailedCleanupReachesDlt(personPhotoChangedTopic, "790", payload, "old-photo.jpg")
+    }
+
+    private fun assertFailedCleanupReachesDlt(topic: String, key: String, payload: String, fileName: String) {
         val dltTopic = "$topic.media.dlt"
 
-        doThrow(IllegalStateException("Simulated cleanup failure")).`when`(fileService).delete(posterName)
+        doThrow(IllegalStateException("Simulated cleanup failure")).`when`(fileService).delete(fileName)
 
         val consumerFactory = DefaultKafkaConsumerFactory(
             KafkaTestUtils.consumerProps(embeddedKafka, "$topic-dlt-reader", false),
@@ -103,13 +143,19 @@ class CatalogListenersIntegrationTest {
             assertEquals(key, received.key())
             assertEquals(payload, received.value())
 
-            verify(fileService, times(3)).delete(posterName)
+            verify(fileService, times(3)).delete(fileName)
             verifyNoMoreInteractions(fileService)
         }
     }
 
     @Configuration(proxyBeanMethods = false)
     @ImportAutoConfiguration(KafkaAutoConfiguration::class, JacksonAutoConfiguration::class)
-    @Import(KafkaConsumerConfig::class, FilmDeletedListener::class, FilmPosterChangedListener::class)
+    @Import(
+        KafkaConsumerConfig::class,
+        FilmDeletedListener::class,
+        FilmPosterChangedListener::class,
+        PersonDeletedListener::class,
+        PersonPhotoChangedListener::class
+    )
     class TestConfig
 }

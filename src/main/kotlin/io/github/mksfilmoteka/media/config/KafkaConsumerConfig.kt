@@ -23,6 +23,18 @@ class KafkaConsumerConfig {
         topic: String
     ): NewTopic = dltTopic(topic)
 
+    @Bean
+    fun personDeletedDltTopic(
+        @Value($$"${app.kafka.topics.person-deleted.name}")
+        topic: String
+    ): NewTopic = dltTopic(topic)
+
+    @Bean
+    fun personPhotoChangedDltTopic(
+        @Value($$"${app.kafka.topics.person-photo-changed.name}")
+        topic: String
+    ): NewTopic = dltTopic(topic)
+
     private fun dltTopic(sourceTopic: String): NewTopic =
         TopicBuilder
             .name("$sourceTopic.media.dlt")
